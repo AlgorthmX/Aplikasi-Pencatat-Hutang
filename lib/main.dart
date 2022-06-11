@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hutangin/src/screens/home_screen.dart';
+import 'package:hutangin/src/screens/main_screen.dart';
 import 'package:hutangin/src/screens/splash_screen.dart';
-
 void main() {
   runApp(const MyApp());
 }
@@ -15,13 +14,12 @@ class MyApp extends StatelessWidget {
       title: 'HutangIn',
       routes: {
         '/': (context) => const SplashScreen(),
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => const MainScreen(),
       },
       initialRoute: '/',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const SplashScreen()
     );
   }
 }

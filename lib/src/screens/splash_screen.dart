@@ -26,9 +26,10 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: const [
             Icon(Icons.monetization_on_outlined),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Text(
               'HutangIn',
             ),
