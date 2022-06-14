@@ -23,12 +23,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Container(
+        alignment: Alignment.center,
+        color: Colors.blue.withOpacity(.1),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
-            Icon(Icons.monetization_on_outlined),
+            Icon(
+              Icons.receipt_long_rounded,
+              size: 48,
+            ),
             SizedBox(height: 24),
             Text(
               'HutangIn',

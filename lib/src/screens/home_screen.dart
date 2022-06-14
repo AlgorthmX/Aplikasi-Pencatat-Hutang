@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  Widget _dashboardTile(BuildContext context, {
+  Widget _dashboardTile(
+    BuildContext context, {
     required Widget icon,
     required Color? iconBgColor,
     required String title,
     required String description,
     required String nominal,
   }) {
+    final widthTile = MediaQuery.of(context).size.width * .52 - (24 * 2);
     return Container(
-      width: MediaQuery.of(context).size.width * .52 - (24 * 2),
+      width: widthTile,
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
@@ -37,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: widthTile * .1,
                       color: Color(0xFF112138),
                       fontWeight: FontWeight.bold,
                     ),
@@ -96,7 +98,8 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _dashboardTile(context,
+              _dashboardTile(
+                context,
                 iconBgColor: Colors.red[100],
                 icon: Icon(
                   Icons.receipt_long_rounded,
@@ -107,7 +110,8 @@ class HomeScreen extends StatelessWidget {
                 description: 'Uang yang dipinjam dari orang lain',
                 nominal: 'Rp 1.000.000',
               ),
-              _dashboardTile(context,
+              _dashboardTile(
+                context,
                 iconBgColor: Colors.green[100],
                 icon: Icon(
                   Icons.monetization_on_outlined,
