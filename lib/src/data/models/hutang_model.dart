@@ -4,6 +4,7 @@ class HutangModel {
   final int id;
   final String namaPemberiPinjaman;
   final int nominal;
+  final int sisa;
   final DateTime tanggalPinjam;
   final String deskripsi;
   final StatusHutangPiutang status;
@@ -14,6 +15,7 @@ class HutangModel {
     required this.id,
     required this.namaPemberiPinjaman,
     required this.nominal,
+    required this.sisa,
     required this.tanggalPinjam,
     required this.deskripsi,
     required this.status,
@@ -25,6 +27,7 @@ class HutangModel {
     int? id,
     String? namaPemberiPinjaman,
     int? nominal,
+    int? sisa,
     DateTime? tanggalPinjam,
     String? deskripsi,
     StatusHutangPiutang? status,
@@ -35,6 +38,7 @@ class HutangModel {
       id: id ?? this.id,
       namaPemberiPinjaman: namaPemberiPinjaman ?? this.namaPemberiPinjaman,
       nominal: nominal ?? this.nominal,
+      sisa: sisa ?? this.sisa,
       tanggalPinjam: tanggalPinjam ?? this.tanggalPinjam,
       deskripsi: deskripsi ?? this.deskripsi,
       status: status ?? this.status,

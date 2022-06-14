@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hutangin/src/bloc/hutang_bloc.dart';
+import 'package:hutangin/src/bloc/piutang_bloc.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key}) : super(key: key);
+
+  final _moneyFormat = NumberFormat();
 
   Widget _dashboardTile(
     BuildContext context, {
@@ -9,7 +15,7 @@ class HomeScreen extends StatelessWidget {
     required Color? iconBgColor,
     required String title,
     required String description,
-    required String nominal,
+    required Widget nominalWidget,
   }) {
     final widthTile = MediaQuery.of(context).size.width * .52 - (24 * 2);
     return Container(
@@ -56,14 +62,7 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            nominal,
-            style: TextStyle(
-              fontSize: 20,
-              color: Color(0xFF112138),
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+          nominalWidget,
         ],
       ),
     );
@@ -108,7 +107,33 @@ class HomeScreen extends StatelessWidget {
                 ),
                 title: 'Hutang',
                 description: 'Uang yang dipinjam dari orang lain',
-                nominal: 'Rp 1.000.000',
+                nominalWidget: BlocBuilder<HutangBloc, HutangState>(
+                  builder: (context, state) {
+                    if (state is HutangLoadSuccess) {
+                      int totalHutang = 0;
+                      for (var hutang in state.allHutang) {
+                        totalHutang += hutang.sisa;
+                      }
+
+                      return Text(
+                        "Rp ${_moneyFormat.format(totalHutang)}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF112138),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      );
+                    }
+                    return const Text(
+                      'Rp 0',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xFF112138),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    );
+                  },
+                ),
               ),
               _dashboardTile(
                 context,
@@ -121,7 +146,33 @@ class HomeScreen extends StatelessWidget {
                 title: 'Piutang',
                 description:
                     'Uang yang dipinjamkan (yang dapat ditagih dari seseorang)',
-                nominal: 'Rp 1.000.000',
+                nominalWidget: BlocBuilder<PiutangBloc, PiutangState>(
+                  builder: (context, state) {
+                    if (state is PiutangLoadSuccess) {
+                      int totalPiutang = 0;
+                      for (var piutang in state.allPiutang) {
+                        totalPiutang += piutang.sisa;
+                      }
+
+                      return Text(
+                        "Rp ${_moneyFormat.format(totalPiutang)}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF112138),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      );
+                    }
+                    return const Text(
+                      'Rp 0',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xFF112138),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    );
+                  },
+                ),
               )
             ],
           ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hutangin/src/bloc/hutang_bloc.dart';
+import 'package:hutangin/src/bloc/piutang_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -15,6 +18,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _initApp() async {
+    context.read<HutangBloc>().add(GetAllHutang());
+    context.read<PiutangBloc>().add(GetAllPiutang());
     await Future.delayed(const Duration(milliseconds: 1500));
     await Future.microtask(
         () => {Navigator.of(context).pushReplacementNamed('/home')});

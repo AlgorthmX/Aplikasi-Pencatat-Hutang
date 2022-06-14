@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hutangin/src/bloc/hutang_bloc.dart';
+import 'package:hutangin/src/bloc/piutang_bloc.dart';
 import 'package:hutangin/src/data/datasource/local/local_data_source.dart';
 import 'package:hutangin/src/data/repositories/hutang_repository.dart';
 import 'package:hutangin/src/data/repositories/piutang_repository.dart';
@@ -27,15 +30,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'HutangIn',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/home': (context) => const MainScreen(),
-      },
-      initialRoute: '/',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<HutangBloc>(
+          create: (context) => HutangBloc(
+            hutangRepository: hutangRepository,
+          ),
+        ),
+        BlocProvider<PiutangBloc>(
+          create: (context) => PiutangBloc(
+            piutangRepository: piutangRepository,
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'HutangIn',
+        routes: {
+          '/': (context) => const SplashScreen(),
+          '/home': (context) => const MainScreen(),
+        },
+        initialRoute: '/',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
       ),
     );
   }

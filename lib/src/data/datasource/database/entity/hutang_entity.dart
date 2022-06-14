@@ -6,6 +6,7 @@ class HutangEntity {
   static const String columnId = 'id';
   static const String columnNamaPemberiPinjaman = 'nama_pemberi_pinjaman';
   static const String columnNominal = 'nominal';
+  static const String columnSisa = 'sisa';
   static const String columnTanggalPinjam = 'tanggal_pinjam';
   static const String columnDeskripsi = 'deskripsi';
   static const String columnStatus = 'status';
@@ -15,6 +16,7 @@ class HutangEntity {
   int? id;
   String? namaPemberiPinjaman;
   int? nominal;
+  int? sisa;
   DateTime? tanggalPinjam;
   String? deskripsi;
   StatusHutangPiutang? status;
@@ -25,6 +27,7 @@ class HutangEntity {
     this.id,
     this.namaPemberiPinjaman,
     this.nominal,
+    this.sisa,
     this.tanggalPinjam,
     this.deskripsi,
     this.status,
@@ -42,6 +45,7 @@ class HutangEntity {
     return {
       columnNamaPemberiPinjaman: namaPemberiPinjaman,
       columnNominal: nominal,
+      columnSisa: sisa,
       columnTanggalPinjam: tanggalPinjam?.millisecondsSinceEpoch,
       columnDeskripsi: deskripsi,
       columnStatus: status?.name,
@@ -54,6 +58,7 @@ class HutangEntity {
     id = map[columnId] as int?;
     namaPemberiPinjaman = map[columnNamaPemberiPinjaman] as String?;
     nominal = map[columnNominal] as int?;
+    sisa = map[columnSisa] as int?;
     tanggalPinjam = (map[columnNominal] as int?).milisToDateTime();
     deskripsi = map[columnDeskripsi] as String?;
     status = (map[columnStatus] as String?).toStatusHutangPiutang();
