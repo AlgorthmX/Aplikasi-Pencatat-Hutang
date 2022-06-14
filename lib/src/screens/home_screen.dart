@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  Widget _dashboardTile({
+  Widget _dashboardTile(BuildContext context, {
     required Widget icon,
     required Color? iconBgColor,
     required String title,
@@ -11,59 +11,58 @@ class HomeScreen extends StatelessWidget {
     required String nominal,
   }) {
     return Container(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          color: Colors.white,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: iconBgColor,
-                      ),
-                      child: icon,
+      width: MediaQuery.of(context).size.width * .52 - (24 * 2),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      color: iconBgColor,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Color(0xFF112138),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: TextStyle(
-                    color: Colors.grey,
+                    child: icon,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              nominal,
-              style: TextStyle(
-                fontSize: 20,
-                color: Color(0xFF112138),
-                fontWeight: FontWeight.w400,
+                  const SizedBox(width: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Color(0xFF112138),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            nominal,
+            style: TextStyle(
+              fontSize: 20,
+              color: Color(0xFF112138),
+              fontWeight: FontWeight.w400,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -93,12 +92,11 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
-          GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 2,
-            crossAxisSpacing: 22,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _dashboardTile(
+              _dashboardTile(context,
                 iconBgColor: Colors.red[100],
                 icon: Icon(
                   Icons.receipt_long_rounded,
@@ -109,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                 description: 'Uang yang dipinjam dari orang lain',
                 nominal: 'Rp 1.000.000',
               ),
-              _dashboardTile(
+              _dashboardTile(context,
                 iconBgColor: Colors.green[100],
                 icon: Icon(
                   Icons.monetization_on_outlined,
