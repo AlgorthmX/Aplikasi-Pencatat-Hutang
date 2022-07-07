@@ -84,7 +84,7 @@ class HomeScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Text(
-              "Hai Riski, Selamat Pagi",
+              "Hallo, Selamat Datang",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
