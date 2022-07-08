@@ -1,5 +1,6 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:hutangin/src/screens/form_hutang_screen.dart';
 import 'package:hutangin/src/screens/home_screen.dart';
 import 'package:hutangin/src/screens/hutang_screen.dart';
 import 'package:hutangin/src/screens/piutang_screen.dart';
@@ -17,8 +18,8 @@ class _MainScreenState extends State<MainScreen> {
 
   final List _screens = [
     HomeScreen(),
-    PiutangScreen(),
     HutangScreen(),
+    PiutangScreen(),
     SettingsScreen(),
   ];
 
@@ -62,6 +63,17 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ],
         ),
+        floatingActionButton: _currentIndex == 1 || _currentIndex == 2
+            ? FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () {
+                  if (_currentIndex == 1) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const FormHutangScreen()));
+                  } else {}
+                },
+              )
+            : null,
       ),
     );
   }
