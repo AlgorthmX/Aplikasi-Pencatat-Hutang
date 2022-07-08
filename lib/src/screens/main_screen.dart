@@ -1,6 +1,7 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:hutangin/src/screens/form_hutang_screen.dart';
+import 'package:hutangin/src/screens/form_piutang_screen.dart';
 import 'package:hutangin/src/screens/home_screen.dart';
 import 'package:hutangin/src/screens/hutang_screen.dart';
 import 'package:hutangin/src/screens/piutang_screen.dart';
@@ -70,7 +71,10 @@ class _MainScreenState extends State<MainScreen> {
                   if (_currentIndex == 1) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const FormHutangScreen()));
-                  } else {}
+                  } else {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const FormPiutangScreen()));
+                  }
                 },
               )
             : null,
