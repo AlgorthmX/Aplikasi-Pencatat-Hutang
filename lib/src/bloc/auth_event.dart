@@ -25,7 +25,9 @@ class ToggleFingerprint extends AuthEvent {
 
 class TogglePin extends AuthEvent {
   final bool enable;
+  final String? pin;
   TogglePin({
     required this.enable,
+    this.pin,
   });
 }

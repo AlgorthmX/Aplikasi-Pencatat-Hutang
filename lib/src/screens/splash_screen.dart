@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hutangin/src/bloc/auth_bloc.dart';
 import 'package:hutangin/src/bloc/hutang_bloc.dart';
 import 'package:hutangin/src/bloc/piutang_bloc.dart';
+import 'package:hutangin/src/screens/pin_screen.dart';
 import 'package:hutangin/src/util/auth_util.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -22,9 +23,8 @@ class _SplashScreenState extends State<SplashScreen> {
   _initApp() async {
     context.read<HutangBloc>().add(GetAllHutang());
     context.read<PiutangBloc>().add(GetAllPiutang());
-    await Future.delayed(const Duration(milliseconds: 1200));
+    await Future.delayed(const Duration(milliseconds: 1000));
     context.read<AuthBloc>().add(CheckIsAuthEnable());
-    // context.read<AuthBloc>().add(CheckFingerprint());
   }
 
   @override
@@ -32,15 +32,16 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthEnabled) {
-            if (state.authType == AuthType.pin) {
-              Navigator.of(context).pushReplacementNamed("/authPin");
-            } else if (state.authType == AuthType.fingerprint) {
+          if (state is AuthDisabled) {
+            Navigator.of(context).pushReplacementNamed('/home');
+          } else if (state is AuthCheck) {
+            if (state.authTypeEnabled == AuthType.pin) {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const PinScreen(isAuth: true)));
+            } else if (state.authTypeEnabled == AuthType.fingerprint) {
               Navigator.of(context).pushReplacementNamed("/authFingerprint");
             }
-          } else if (state is AuthDisabled) {
-            Navigator.of(context).pushReplacementNamed('/home');
-          } 
+          }
         },
         child: Container(
           alignment: Alignment.center,

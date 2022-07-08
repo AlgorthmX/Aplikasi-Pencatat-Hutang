@@ -10,6 +10,10 @@ class AuthRepository {
     return _localDataSource.isPinEnable();
   }
 
+  Future<bool> isSupportFingerprint() async {
+    return _localDataSource.isSupportFingerprint();
+  }
+
   Future<bool> isFingerprintEnable() async {
     return _localDataSource.isFingerprintEnable();
   }

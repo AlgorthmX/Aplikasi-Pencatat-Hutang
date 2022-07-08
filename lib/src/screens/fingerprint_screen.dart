@@ -37,7 +37,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: const [
-                  Icon(Icons.close),
+                  Icon(Icons.check),
                   SizedBox(
                     width: 12.0,
                   ),

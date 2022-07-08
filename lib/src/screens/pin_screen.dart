@@ -6,7 +6,8 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PinScreen extends StatefulWidget {
-  const PinScreen({Key? key}) : super(key: key);
+  final bool isAuth;
+  const PinScreen({Key? key, this.isAuth = false}) : super(key: key);
 
   @override
   _PinScreenState createState() => _PinScreenState();
@@ -29,8 +30,8 @@ class _PinScreenState extends State<PinScreen> {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthSuccess) {
-            if (state.authType == AuthType.pin) {
+          if (state is AuthEnabled) {
+            if (state.authTypeEnabled == AuthType.pin) {
               _ftoast?.showToast(
                   child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -42,7 +43,7 @@ class _PinScreenState extends State<PinScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: const [
-                    Icon(Icons.close),
+                    Icon(Icons.check),
                     SizedBox(
                       width: 12.0,
                     ),
@@ -72,6 +73,27 @@ class _PinScreenState extends State<PinScreen> {
                 ],
               ),
             ));
+          } else if (state is AuthToggleSuccess) {
+            _ftoast?.showToast(
+                child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0),
+                color: Colors.greenAccent,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check),
+                  const SizedBox(
+                    width: 12.0,
+                  ),
+                  Text(state.message),
+                ],
+              ),
+            ));
+            Navigator.of(context).pop();
           }
         },
         child: Container(
@@ -92,7 +114,7 @@ class _PinScreenState extends State<PinScreen> {
                   children: [
                     const SizedBox(height: 24),
                     Text(
-                      "Autentikasi PIN",
+                      widget.isAuth ? "Autentikasi PIN" : "Buat PIN",
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 22,
@@ -100,7 +122,9 @@ class _PinScreenState extends State<PinScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "Untuk melanjutkan ke aplikasi, harus melakukan autentikasi",
+                      widget.isAuth
+                          ? "Untuk melanjutkan ke aplikasi, harus melakukan autentikasi"
+                          : "Buat PIN untuk melakukan autentikasi sebelum melanjutkan ke aplikasi",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
@@ -142,7 +166,13 @@ class _PinScreenState extends State<PinScreen> {
                           controller: textEditingController,
                           keyboardType: TextInputType.number,
                           onCompleted: (pin) {
-                            context.read<AuthBloc>().add(DoPin(pin: pin));
+                            if (widget.isAuth) {
+                              context.read<AuthBloc>().add(DoPin(pin: pin));
+                            } else {
+                              context
+                                  .read<AuthBloc>()
+                                  .add(TogglePin(enable: true, pin: pin));
+                            }
                           },
                           onChanged: (value) {},
                         ),

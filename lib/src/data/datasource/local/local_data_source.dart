@@ -67,6 +67,18 @@ class LocalDataSource {
     }
   }
 
+  Future<bool> isSupportFingerprint() async {
+    try {
+      final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
+      final bool canAuthenticate =
+          canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+
+      return canAuthenticate;
+    } on Exception catch (e) {
+      return false;
+    }
+  }
+
   Future<bool> isFingerprintEnable() async {
     try {
       final prefs = await SharedPreferences.getInstance();
