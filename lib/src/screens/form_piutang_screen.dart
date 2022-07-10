@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hutangin/src/bloc/hutang_bloc.dart';
+import 'package:hutangin/src/bloc/piutang_bloc.dart';
 import 'package:hutangin/src/data/datasource/database/entity/piutang_entity.dart';
 import 'package:hutangin/src/data/datasource/database/entity/status_hutang_piutang.dart';
 import 'package:hutangin/src/screens/widgets/custom_input.dart';
@@ -13,8 +13,7 @@ class FormPiutangScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FormPiutangScreenState createState() =>
-      _FormPiutangScreenState();
+  _FormPiutangScreenState createState() => _FormPiutangScreenState();
 }
 
 class _FormPiutangScreenState extends State<FormPiutangScreen> {
@@ -33,6 +32,7 @@ class _FormPiutangScreenState extends State<FormPiutangScreen> {
     _ftoast = FToast();
     _ftoast?.init(context);
     _piutangEntity.status = StatusHutangPiutang.belumLunas;
+    _date = DateTime.now();
   }
 
   @override
@@ -44,21 +44,25 @@ class _FormPiutangScreenState extends State<FormPiutangScreen> {
           color: Colors.blueAccent.withOpacity(.2),
           child: Form(
             key: _formKey,
-            child: BlocListener<HutangBloc, HutangState>(
+            child: BlocListener<PiutangBloc, PiutangState>(
               listener: (context, state) {
-                if (state is HutangMessage) {
+                if (state is PiutangMessage) {
                   _ftoast?.showToast(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24.0, vertical: 12.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25.0),
-                        color: Colors.greenAccent,
+                        color: state is NotifSuccess
+                            ? Colors.greenAccent
+                            : Colors.redAccent,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.check),
+                          Icon(state is NotifSuccess
+                              ? Icons.check
+                              : Icons.close),
                           const SizedBox(
                             width: 12.0,
                           ),
@@ -67,6 +71,9 @@ class _FormPiutangScreenState extends State<FormPiutangScreen> {
                       ),
                     ),
                   );
+                  if (state is NotifSuccess) {
+                    Navigator.of(context).pop();
+                  }
                 }
               },
               child: ListView(
@@ -166,7 +173,8 @@ class _FormPiutangScreenState extends State<FormPiutangScreen> {
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState!.save();
-                                    // Add Hutang here
+                                    context.read<PiutangBloc>().add(
+                                        AddPiutang(params: _piutangEntity));
                                   }
                                 },
                               ),

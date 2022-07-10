@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hutangin/src/bloc/hutang_bloc.dart';
-import 'package:hutangin/src/data/datasource/database/entity/piutang_entity.dart';
-import 'package:hutangin/src/data/datasource/database/entity/status_hutang_piutang.dart';
+import 'package:hutangin/src/bloc/angsuran_piutang_bloc.dart';
+import 'package:hutangin/src/data/datasource/database/entity/angsuran_piutang_entity.dart';
+import 'package:hutangin/src/data/models/piutang_model.dart';
 import 'package:hutangin/src/screens/widgets/custom_input.dart';
 import 'package:intl/intl.dart';
 
 class FormAngsuranPiutangScreen extends StatefulWidget {
+  final PiutangModel piutang;
   const FormAngsuranPiutangScreen({
     Key? key,
+    required this.piutang,
   }) : super(key: key);
 
   @override
@@ -23,7 +25,7 @@ class _FormAngsuranPiutangScreenState extends State<FormAngsuranPiutangScreen> {
   final _dateInputController = TextEditingController();
   DateTime? _date;
   final format = DateFormat('yyyy-MM-dd');
-  final _piutangEntity = PiutangEntity();
+  final _angsuranPiutangEntity = AngsuranPiutangEntity();
   FToast? _ftoast;
 
   @override
@@ -32,7 +34,8 @@ class _FormAngsuranPiutangScreenState extends State<FormAngsuranPiutangScreen> {
     _dateInputController.text = format.format(DateTime.now());
     _ftoast = FToast();
     _ftoast?.init(context);
-    _piutangEntity.status = StatusHutangPiutang.belumLunas;
+    _date = DateTime.now();
+    _angsuranPiutangEntity.piutangId = widget.piutang.id;
   }
 
   @override
@@ -44,21 +47,25 @@ class _FormAngsuranPiutangScreenState extends State<FormAngsuranPiutangScreen> {
           color: Colors.blueAccent.withOpacity(.2),
           child: Form(
             key: _formKey,
-            child: BlocListener<HutangBloc, HutangState>(
+            child: BlocListener<AngsuranPiutangBloc, AngsuranPiutangState>(
               listener: (context, state) {
-                if (state is HutangMessage) {
+                if (state is AngsuranPiutangMessage) {
                   _ftoast?.showToast(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24.0, vertical: 12.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25.0),
-                        color: Colors.greenAccent,
+                        color: state is AngsuranPiutangNotifSuccess
+                            ? Colors.greenAccent
+                            : Colors.redAccent,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.check),
+                          Icon(state is AngsuranPiutangNotifSuccess
+                              ? Icons.check
+                              : Icons.close),
                           const SizedBox(
                             width: 12.0,
                           ),
@@ -67,6 +74,9 @@ class _FormAngsuranPiutangScreenState extends State<FormAngsuranPiutangScreen> {
                       ),
                     ),
                   );
+                  if (state is AngsuranPiutangNotifSuccess) {
+                    Navigator.of(context).pop();
+                  }
                 }
               },
               child: ListView(
@@ -87,10 +97,10 @@ class _FormAngsuranPiutangScreenState extends State<FormAngsuranPiutangScreen> {
                           },
                         ),
                         const SizedBox(width: 8),
-                        Expanded(
+                        const Expanded(
                           child: Text(
-                            "Form Angsuran Hutang",
-                            style: const TextStyle(
+                            "Form Angsuran Piutang",
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.blueAccent,
@@ -113,17 +123,17 @@ class _FormAngsuranPiutangScreenState extends State<FormAngsuranPiutangScreen> {
                           label: "Nominal",
                           textInputType: TextInputType.number,
                           onSaved: (value) {
-                            _piutangEntity.nominal = int.parse(value!);
+                            _angsuranPiutangEntity.nominal = int.parse(value!);
                           },
                         ),
                         const SizedBox(height: 16),
                         CustomInput(
                           controller: _dateInputController,
-                          label: "Tanggal Pinjam",
+                          label: "Tanggal Bayar",
                           isDate: true,
                           textInputType: TextInputType.datetime,
                           onSaved: (value) {
-                            _piutangEntity.tanggalPinjam = _date;
+                            _angsuranPiutangEntity.tanggalBayar = _date;
                           },
                           onSuffixClick: () async {
                             _date = await showDatePicker(
@@ -144,15 +154,16 @@ class _FormAngsuranPiutangScreenState extends State<FormAngsuranPiutangScreen> {
                           isNullable: true,
                           textInputType: TextInputType.text,
                           onSaved: (value) {
-                            _piutangEntity.deskripsi = value;
+                            _angsuranPiutangEntity.deskripsi = value;
                           },
                         ),
                         const SizedBox(height: 16),
                         CustomInput(
                           label: "Cara Bayar (Opsional)",
                           textInputType: TextInputType.text,
+                          isNullable: true,
                           onSaved: (value) {
-                            _piutangEntity.namaPeminjam = value;
+                            _angsuranPiutangEntity.caraBayar = value;
                           },
                         ),
                         const SizedBox(height: 16),
@@ -166,7 +177,12 @@ class _FormAngsuranPiutangScreenState extends State<FormAngsuranPiutangScreen> {
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState!.save();
-                                    // Add angsuran Hutang Here
+                                    context
+                                        .read<AngsuranPiutangBloc>()
+                                        .add(AddAngsuranPiutang(
+                                          params: _angsuranPiutangEntity,
+                                          piutang: widget.piutang,
+                                        ));
                                   }
                                 },
                               ),

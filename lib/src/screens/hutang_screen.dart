@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hutangin/src/bloc/angsuran_hutang_bloc.dart';
 import 'package:hutangin/src/bloc/hutang_bloc.dart';
 import 'package:hutangin/src/data/models/hutang_model.dart';
 import 'package:hutangin/src/screens/angsuran_hutang_screen.dart';
@@ -59,6 +60,9 @@ class HutangScreen extends StatelessWidget {
                           builder: (context, state) {
                             if (state is HutangLoadSuccess) {
                               int total = 0;
+                              for (var hutang in state.allHutang) {
+                                total += (hutang.nominal - hutang.dibayar);
+                              }
                               return Text(
                                 'Rp ${numberFormat.format(total)}',
                                 style: const TextStyle(
@@ -103,9 +107,12 @@ class HutangScreen extends StatelessWidget {
                         nama: hutang.namaPemberiPinjaman,
                         deskripsi: hutang.deskripsi,
                         jumlah: hutang.nominal,
-                        dibayar: hutang.sisa,
-                        sisa: hutang.nominal - hutang.sisa,
+                        dibayar: hutang.dibayar,
+                        sisa: hutang.nominal - hutang.dibayar,
                         onClick: () {
+                          context
+                              .read<AngsuranHutangBloc>()
+                              .add(GetAngsuranHutang(hutang: hutang));
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
                                   AngsuranHutangScreen(hutang: hutang)));

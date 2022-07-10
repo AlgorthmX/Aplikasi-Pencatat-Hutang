@@ -23,8 +23,6 @@ class LocalDataSource {
       angsuranHutangProvider,
       angsuranPiutangProvider,
     ]);
-
-    dbHelper?.setup();
   }
 
   Future close() async {

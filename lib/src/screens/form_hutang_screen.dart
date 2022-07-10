@@ -13,8 +13,7 @@ class FormHutangScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FormHutangScreenState createState() =>
-      _FormHutangScreenState();
+  _FormHutangScreenState createState() => _FormHutangScreenState();
 }
 
 class _FormHutangScreenState extends State<FormHutangScreen> {
@@ -33,6 +32,7 @@ class _FormHutangScreenState extends State<FormHutangScreen> {
     _ftoast = FToast();
     _ftoast?.init(context);
     _hutangEntity.status = StatusHutangPiutang.belumLunas;
+    _date = DateTime.now();
   }
 
   @override
@@ -53,12 +53,16 @@ class _FormHutangScreenState extends State<FormHutangScreen> {
                           horizontal: 24.0, vertical: 12.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25.0),
-                        color: Colors.greenAccent,
+                        color: state is NotifSuccess
+                            ? Colors.greenAccent
+                            : Colors.redAccent,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.check),
+                          Icon(state is NotifSuccess
+                              ? Icons.check
+                              : Icons.close),
                           const SizedBox(
                             width: 12.0,
                           ),
@@ -67,6 +71,9 @@ class _FormHutangScreenState extends State<FormHutangScreen> {
                       ),
                     ),
                   );
+                  if (state is NotifSuccess) {
+                    Navigator.of(context).pop();
+                  }
                 }
               },
               child: ListView(
@@ -110,7 +117,7 @@ class _FormHutangScreenState extends State<FormHutangScreen> {
                     child: Column(
                       children: [
                         CustomInput(
-                          label: "Nama Peminjam",
+                          label: "Nama Pemberi Pinjaman",
                           textInputType: TextInputType.text,
                           onSaved: (value) {
                             _hutangEntity.namaPemberiPinjaman = value;
@@ -166,7 +173,9 @@ class _FormHutangScreenState extends State<FormHutangScreen> {
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState!.save();
-                                    // Add Hutang here
+                                    context
+                                        .read<HutangBloc>()
+                                        .add(AddHutang(params: _hutangEntity));
                                   }
                                 },
                               ),

@@ -13,7 +13,7 @@ class PiutangProvider implements BaseProvider {
         ${PiutangEntity.columnId} integer primary key autoincrement,
         ${PiutangEntity.columnNamaPeminjam} text not null, 
         ${PiutangEntity.columnNominal} integer not null, 
-        ${PiutangEntity.columnSisa} integer not null, 
+        ${PiutangEntity.columnDibayar} integer not null, 
         ${PiutangEntity.columnTanggalPinjam} integer not null,
         ${PiutangEntity.columnDeskripsi} text,
         ${PiutangEntity.columnStatus} text not null,

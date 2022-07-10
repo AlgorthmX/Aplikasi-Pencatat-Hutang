@@ -27,7 +27,7 @@ class HutangPiutangTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
@@ -38,7 +38,7 @@ class HutangPiutangTile extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Text(
                 tanggal,
-                style: TextStyle(),
+                style: const TextStyle(),
               ),
             ),
             Column(
@@ -46,14 +46,14 @@ class HutangPiutangTile extends StatelessWidget {
               children: [
                 Text(
                   nama,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  deskripsi,
+                  deskripsi.isEmpty ? "<kosong>" : deskripsi,
                   style: TextStyle(
                     fontSize: 15,
                     color: Colors.black.withOpacity(.45),
