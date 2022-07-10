@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hutangin/src/bloc/angsuran_hutang_bloc.dart';
+import 'package:hutangin/src/bloc/angsuran_piutang_bloc.dart';
 import 'package:hutangin/src/bloc/auth_bloc.dart';
 import 'package:hutangin/src/bloc/hutang_bloc.dart';
 import 'package:hutangin/src/bloc/piutang_bloc.dart';
@@ -15,6 +17,7 @@ import 'package:hutangin/src/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final _localDataSource = LocalDataSource();
+  await _localDataSource.dbHelper?.setup();
   final _hutangRepository = HutangRepository(_localDataSource);
   final _piutangRepository = PiutangRepository(_localDataSource);
   final _authRepository = AuthRepository(_localDataSource);
@@ -55,14 +58,26 @@ class MyApp extends StatelessWidget {
             authRepository: authRepository,
           ),
         ),
+        BlocProvider<AngsuranHutangBloc>(
+          create: (context) => AngsuranHutangBloc(
+            hutangRepository: hutangRepository,
+            hutangBloc: context.read<HutangBloc>()
+          ),
+        ),
+        BlocProvider<AngsuranPiutangBloc>(
+          create: (context) => AngsuranPiutangBloc(
+            piutangRepository: piutangRepository,
+            piutangBloc: context.read<PiutangBloc>()
+          ),
+        ),
       ],
       child: MaterialApp(
         title: 'HutangIn',
         routes: {
           '/': (context) => const SplashScreen(),
           '/home': (context) => const MainScreen(),
-          '/authPin': (context) => PinScreen(),
-          '/authFingerprint': (context) => FingerprintScreen(),
+          '/authPin': (context) => const PinScreen(),
+          '/authFingerprint': (context) => const FingerprintScreen(),
         },
         initialRoute: '/',
         theme: ThemeData(

@@ -13,7 +13,7 @@ class HutangProvider implements BaseProvider {
         ${HutangEntity.columnId} integer primary key autoincrement,
         ${HutangEntity.columnNamaPemberiPinjaman} text not null, 
         ${HutangEntity.columnNominal} integer not null, 
-        ${HutangEntity.columnSisa} integer not null,
+        ${HutangEntity.columnDibayar} integer not null,
         ${HutangEntity.columnTanggalPinjam} integer not null,
         ${HutangEntity.columnDeskripsi} text,
         ${HutangEntity.columnStatus} text not null,

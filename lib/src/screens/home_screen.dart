@@ -112,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                     if (state is HutangLoadSuccess) {
                       int totalHutang = 0;
                       for (var hutang in state.allHutang) {
-                        totalHutang += hutang.sisa;
+                        totalHutang += (hutang.nominal - hutang.dibayar);
                       }
 
                       return Text(
@@ -151,7 +151,7 @@ class HomeScreen extends StatelessWidget {
                     if (state is PiutangLoadSuccess) {
                       int totalPiutang = 0;
                       for (var piutang in state.allPiutang) {
-                        totalPiutang += piutang.sisa;
+                        totalPiutang += (piutang.nominal - piutang.dibayar);
                       }
 
                       return Text(

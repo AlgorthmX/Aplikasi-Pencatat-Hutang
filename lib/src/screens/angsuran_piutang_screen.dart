@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hutangin/src/bloc/angsuran_piutang_bloc.dart';
+import 'package:hutangin/src/bloc/piutang_bloc.dart';
+import 'package:hutangin/src/data/models/angsuran_piutang_model.dart';
 import 'package:hutangin/src/data/models/piutang_model.dart';
 import 'package:hutangin/src/screens/form_angsuran_piutang_screen.dart';
 import 'package:hutangin/src/screens/widgets/angsuran_tile.dart';
@@ -19,6 +23,7 @@ class AngsuranPiutangScreen extends StatefulWidget {
 class _AngsuranPiutangScreenState extends State<AngsuranPiutangScreen> {
   final format = DateFormat('dd MMMM yyyy');
   final numberFormat = NumberFormat();
+  bool _updated = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +34,9 @@ class _AngsuranPiutangScreenState extends State<AngsuranPiutangScreen> {
           child: const Icon(Icons.add),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (contxet) => const FormAngsuranPiutangScreen()));
+                builder: (contxet) => FormAngsuranPiutangScreen(
+                      piutang: widget.piutang,
+                    )));
           },
         ),
         body: Container(
@@ -56,15 +63,24 @@ class _AngsuranPiutangScreenState extends State<AngsuranPiutangScreen> {
                               },
                             ),
                             const SizedBox(width: 8),
-                            Expanded(
+                            const Expanded(
                               child: Text(
                                 "Detail Piutang",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.blueAccent,
                                 ),
                               ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                context
+                                    .read<PiutangBloc>()
+                                    .add(DeletePiutang(params: widget.piutang));
+                              },
                             ),
                           ],
                         ),
@@ -75,14 +91,36 @@ class _AngsuranPiutangScreenState extends State<AngsuranPiutangScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                child: HutangPiutangTile(
-                  tanggal: format.format(widget.piutang.tanggalPinjam),
-                  nama: widget.piutang.namaPeminjam,
-                  deskripsi: widget.piutang.deskripsi,
-                  onClick: () {},
-                  jumlah: widget.piutang.nominal,
-                  dibayar: widget.piutang.sisa,
-                  sisa: widget.piutang.nominal - widget.piutang.sisa,
+                child: BlocConsumer<PiutangBloc, PiutangState>(
+                  listener: (context, state) {
+                    if (state is NotifSuccess) {
+                      _updated = true;
+                    }
+                  },
+                  builder: (context, state) {
+                    if (_updated && state is PiutangLoadSuccess) {
+                      PiutangModel piutang = state.allPiutang.firstWhere(
+                          (piutang) => piutang.id == widget.piutang.id);
+                      return HutangPiutangTile(
+                        tanggal: format.format(widget.piutang.tanggalPinjam),
+                        nama: widget.piutang.namaPeminjam,
+                        deskripsi: widget.piutang.deskripsi,
+                        onClick: () {},
+                        jumlah: piutang.nominal,
+                        dibayar: piutang.dibayar,
+                        sisa: piutang.nominal - piutang.dibayar,
+                      );
+                    }
+                    return HutangPiutangTile(
+                      tanggal: format.format(widget.piutang.tanggalPinjam),
+                      nama: widget.piutang.namaPeminjam,
+                      deskripsi: widget.piutang.deskripsi,
+                      onClick: () {},
+                      jumlah: widget.piutang.nominal,
+                      dibayar: widget.piutang.dibayar,
+                      sisa: widget.piutang.nominal - widget.piutang.dibayar,
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 12),
@@ -94,16 +132,48 @@ class _AngsuranPiutangScreenState extends State<AngsuranPiutangScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(
-                      left: 22, right: 22, top: 18, bottom: 18),
-                  itemCount: 2,
-                  itemBuilder: (context, i) {
-                    return AngsuranTile();
-                  },
-                ),
-              ),
+              BlocBuilder<AngsuranPiutangBloc, AngsuranPiutangState>(
+                builder: (context, state) {
+                  if (state is AngsuranPiutangLoadSuccess) {
+                    if (state.allAngsuran.isEmpty) {
+                      return Container(
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white,
+                        ),
+                        child: const Text(
+                          "Angsuran masih kosong!",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      );
+                    }
+                    return Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.only(
+                            left: 22, right: 22, top: 18, bottom: 18),
+                        itemCount: state.allAngsuran.length,
+                        itemBuilder: (context, i) {
+                          AngsuranPiutangModel angsuran = state.allAngsuran[i];
+                          return AngsuranTile(
+                            tanggal: format.format(angsuran.tanggalBayar),
+                            title: numberFormat.format(angsuran.nominal),
+                            deskripsi: angsuran.deskripsi,
+                            caraBayar: angsuran.caraBayar.isNotEmpty
+                                ? angsuran.caraBayar
+                                : null,
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                },
+              )
             ],
           ),
         ),
